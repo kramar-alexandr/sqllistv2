@@ -33,7 +33,7 @@ function AppContent() {
   };
 
   if (table === 'ORVC') return <ORVCList {...props} />;
-  if (table === 'IVVC') return <IVVCList compno={props.compno} salesman={props.salesman} salesgroup={props.salesgroup} />;
+  if (table === 'IVVC') return <IVVCList compno={props.compno} salesman={props.salesman} salesgroup={props.salesgroup} user={props.user} />;
 
   return (
     <div style={{ padding: 24, color: '#888' }}>

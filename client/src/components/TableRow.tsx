@@ -25,9 +25,10 @@ interface Props {
   selected: boolean;
   onClick: (row: ORVCRow) => void;
   onInfoClick: (sernr: number) => void;
+  onDblClick?: (sernr: number) => void;
 }
 
-export default function TableRow({ row, selected, onClick, onInfoClick }: Props) {
+export default function TableRow({ row, selected, onClick, onInfoClick, onDblClick }: Props) {
   const flag = Number(row.CUSTOMSTATUSFLAG);
   const statusCls = selected ? 'row-selected' : (STATUS_CLASS[flag] ?? '');
 
@@ -36,6 +37,7 @@ export default function TableRow({ row, selected, onClick, onInfoClick }: Props)
       className={`trow ${statusCls}`}
       style={{ height: ROW_HEIGHT }}
       onClick={() => onClick(row)}
+      onDoubleClick={onDblClick ? () => onDblClick(row.SERNR) : undefined}
     >
       <div className="tc tc-info">
         <button

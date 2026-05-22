@@ -83,6 +83,7 @@ export default function ORVCList({ compno, salesman, salesgroup, user, searchstr
       <VirtualTable
         filters={filters}
         filterKey={fKey}
+        user={user}
         onRowClick={handleRowClick}
         onInfoClick={handleInfoClick}
       />

@@ -2,6 +2,7 @@ import { useRef, useMemo, useCallback, useState, useEffect } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useORVCList, PAGE_SIZE } from '../hooks/useORVCList';
 import { useLiveSync } from '../hooks/useLiveSync';
+import { useERPUrl, openInERP } from '../hooks/useERPUrl';
 import TableRow, { SkeletonRow, ROW_HEIGHT } from './TableRow';
 import type { ORVCFilters, ORVCRow } from '../types/orvc';
 
@@ -37,6 +38,7 @@ const COLUMNS: Column[] = [
 interface Props {
   filters: ORVCFilters;
   filterKey: string;
+  user: string;
   onRowClick: (row: ORVCRow) => void;
   onInfoClick: (sernr: number) => void;
 }
@@ -46,7 +48,8 @@ interface Sort {
   dir: 'asc' | 'desc';
 }
 
-export default function VirtualTable({ filters, filterKey, onRowClick, onInfoClick }: Props) {
+export default function VirtualTable({ filters, filterKey, user, onRowClick, onInfoClick }: Props) {
+  const erpUrl = useERPUrl();
   const parentRef = useRef<HTMLDivElement>(null);
   const [selectedSernr, setSelectedSernr] = useState<number | null>(null);
   const [sort, setSort] = useState<Sort>({ by: 'SERNR', dir: 'desc' });
@@ -185,6 +188,7 @@ export default function VirtualTable({ filters, filterKey, onRowClick, onInfoCli
                     selected={row.SERNR === selectedSernr}
                     onClick={handleRowClick}
                     onInfoClick={onInfoClick}
+                    onDblClick={sernr => openInERP(erpUrl, sernr, user, 'ORDClass')}
                   />
                 ) : (
                   <SkeletonRow key={`sk-${virtualItem.index}-${pageIndex}`} />

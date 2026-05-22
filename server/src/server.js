@@ -28,6 +28,11 @@ server.register(ivvcRoutes, { prefix: '/api/v2' });
 
 server.get('/health', async () => ({ ok: true }));
 
+// Runtime config for client — ERP base URL without trailing slash
+server.get('/api/config', async () => ({
+  erpUrl: (process.env.ERP_URL || '').replace(/\/$/, '')
+}));
+
 async function start() {
   try {
     await db.raw('select 1 as ok');

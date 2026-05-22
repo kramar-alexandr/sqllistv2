@@ -27,6 +27,7 @@ services:
       DB_USER: sa
       DB_PASSWORD: "${MSSQL_SA_PASSWORD}"
       DB_NAME: "${DB_NAME}"
+      ERP_URL: "${ERP_URL}"
     ports:
       - "${HTTP_PORT:-3001}:3001"    # HTTP доступ к спискам
     depends_on:

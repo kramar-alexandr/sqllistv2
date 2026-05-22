@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
+import { useERPUrl, openInERP } from '../hooks/useERPUrl';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useIVVCList, IVVC_PAGE_SIZE } from '../hooks/useIVVCList';
 import type { IVVCRow, IVVCFilters } from '../types/ivvc';
@@ -72,9 +73,11 @@ interface Props {
   compno: string;
   salesman: string;
   salesgroup: string;
+  user: string;
 }
 
-export default function IVVCList({ compno, salesman, salesgroup }: Props) {
+export default function IVVCList({ compno, salesman, salesgroup, user }: Props) {
+  const erpUrl = useERPUrl();
   const parentRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -203,6 +206,7 @@ export default function IVVCList({ compno, salesman, salesgroup }: Props) {
                       row={row}
                       selected={row.SERNR === selectedSernr}
                       onClick={setSelectedSernr}
+                      onDblClick={sernr => openInERP(erpUrl, sernr, user, 'IVDClass')}
                     />
                   ) : (
                     <div className="trow trow-skeleton" style={{ height: ROW_HEIGHT }}>
@@ -229,10 +233,11 @@ function rowClass(row: IVVCRow): string {
   return color ? `trow ${color}` : 'trow';
 }
 
-function IVVCRowEl({ row, selected, onClick }: {
+function IVVCRowEl({ row, selected, onClick, onDblClick }: {
   row: IVVCRow;
   selected: boolean;
   onClick: (sernr: number) => void;
+  onDblClick: (sernr: number) => void;
 }) {
   const cls = `${rowClass(row)}${selected ? ' row-selected' : ''}`;
   return (
@@ -240,6 +245,7 @@ function IVVCRowEl({ row, selected, onClick }: {
       className={cls}
       style={{ height: ROW_HEIGHT, display: 'flex', alignItems: 'center' }}
       onClick={() => onClick(row.SERNR)}
+      onDoubleClick={() => onDblClick(row.SERNR)}
     >
       {COLUMNS.map((col, i) => {
         const val = col.render(row);
