@@ -16,11 +16,11 @@ server.register(cors, {
 
 // Serve built React SPA from ./public (populated during Docker build)
 const publicDir = path.join(__dirname, '..', 'public');
-server.register(staticPlugin, { root: publicDir, prefix: '/', decorateReply: false });
+server.register(staticPlugin, { root: publicDir, prefix: '/' });
 
-// SPA route: /list/<TABLE>/html/<file>.html → serve the built HTML entry
-server.get('/list/:table/html/:file', async (req, reply) => {
-  return reply.sendFile(req.params.file, publicDir);
+// SPA route: /list/<TABLE>/html/*.html → serve index.html (Vite output)
+server.get('/list/:table/html/:file', async (_req, reply) => {
+  return reply.sendFile('index.html');
 });
 
 server.register(orvcRoutes, { prefix: '/api/v2' });
