@@ -1,13 +1,38 @@
 services:
-  app:
-    build: .
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
+      MSSQL_PID: "Developer"
     ports:
-      - "${HOST_PORT:-3001}:3001"
-    env_file:
-      - server/.env
+      - "${MSSQL_PORT:-1433}:1433"   # открыт для зеркалирования ERP
+    volumes:
+      - mssql_data:/var/opt/mssql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' -No || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  sqllist:
+    image: ghcr.io/kramar-alexandr/sqllistv2:latest
     environment:
       PORT: "3001"
-      DB_HOST: host.docker.internal
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      DB_HOST: mssql
+      DB_PORT: "1433"
+      DB_USER: sa
+      DB_PASSWORD: "${MSSQL_SA_PASSWORD}"
+      DB_NAME: "${DB_NAME}"
+    ports:
+      - "${HTTP_PORT:-3001}:3001"    # HTTP доступ к спискам
+    depends_on:
+      mssql:
+        condition: service_healthy
     restart: unless-stopped
+
+volumes:
+  mssql_data:

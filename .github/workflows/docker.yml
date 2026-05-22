@@ -1,4 +1,4 @@
-name: Build & push Docker image
+name: Build, push & deploy
 
 on:
   push:
@@ -30,3 +30,19 @@ jobs:
           tags: |
             ghcr.io/kramar-alexandr/sqllistv2:latest
             ghcr.io/kramar-alexandr/sqllistv2:${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull new image and restart sqllist on prod server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            docker compose pull sqllist
+            docker compose up -d --no-deps sqllist
