@@ -44,5 +44,5 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
-            docker compose pull sqllist
-            docker compose up -d --no-deps sqllist
+            docker-compose pull sqllist
+            docker-compose up -d --no-deps sqllist
