@@ -2,6 +2,8 @@ export interface IVVCRow {
   SERNR: number;
   OKFLAG: string;       // '✓' | ''
   INVDATE: string;
+  PAYDATE: string;
+  OURCONTACT: string;
   OFFICIALSERNR: string;
   ORDERNR: number | null;
   CUSTCODE: string;

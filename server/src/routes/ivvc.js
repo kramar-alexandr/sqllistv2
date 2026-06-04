@@ -1,7 +1,7 @@
 const db = require('../db');
 
 const IVVC_COLUMNS = [
-  'SERNR', 'OKFLAG', 'INVDATE', 'OFFICIALSERNR', 'ORDERNR',
+  'SERNR', 'OKFLAG', 'INVDATE', 'PAYDATE', 'OURCONTACT', 'OFFICIALSERNR', 'ORDERNR',
   'CUSTCODE', 'ADDR0', 'SUM4', 'INVTYPE', 'CURNCYCODE', 'INVALID',
   'SALESMAN', 'compno'
 ];
@@ -86,10 +86,12 @@ function formatRow(row) {
   delete row.AR_RVAL;
   delete row.AR_DUEDATE;
 
-  if (row.INVDATE) {
-    const d = new Date(row.INVDATE);
-    if (!isNaN(d.getTime())) {
-      row.INVDATE = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  for (const dateField of ['INVDATE', 'PAYDATE']) {
+    if (row[dateField]) {
+      const d = new Date(row[dateField]);
+      if (!isNaN(d.getTime())) {
+        row[dateField] = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      }
     }
   }
   const markMap = { 0: '', 1: '✓', 18: '✓' };
