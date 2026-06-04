@@ -22,5 +22,5 @@ export function openInERP(erpUrl: string, sernr: number | string, user: string, 
     `?user=${encodeURIComponent(user)}` +
     `&sernr=${encodeURIComponent(sernr)}` +
     `&wclass=${encodeURIComponent(wclass)}`;
-  window.open(url, '_blank');
+  fetch(url, { mode: 'no-cors' }).catch(() => {});
 }
