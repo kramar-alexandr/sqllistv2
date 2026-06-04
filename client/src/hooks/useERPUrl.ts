@@ -16,11 +16,12 @@ export function useERPUrl(): string {
   return data?.erpUrl ?? '';
 }
 
-export function openInERP(erpUrl: string, sernr: number | string, user: string, wclass: string) {
-  if (!erpUrl) return;
-  const url = `${erpUrl}/WebOpenDCLassForUser.hal` +
-    `?user=${encodeURIComponent(user)}` +
-    `&sernr=${encodeURIComponent(sernr)}` +
-    `&wclass=${encodeURIComponent(wclass)}`;
-  fetch(url, { mode: 'no-cors' }).catch(() => {});
+// Calls server-side proxy /api/erp/open — server reaches ERP over local network
+export function openInERP(_erpUrl: string, sernr: number | string, user: string, wclass: string) {
+  const params = new URLSearchParams({
+    user: String(user),
+    sernr: String(sernr),
+    wclass,
+  });
+  fetch(`/api/erp/open?${params}`).catch(() => {});
 }

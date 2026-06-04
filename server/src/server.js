@@ -33,6 +33,28 @@ server.get('/api/config', async () => ({
   erpUrl: (process.env.ERP_URL || '').replace(/\/$/, '')
 }));
 
+// Server-side proxy: opens ERP window on behalf of client
+// Client can't reach ERP directly — server calls it over local network
+server.get('/api/erp/open', async (request, reply) => {
+  const { user = '', sernr = '', wclass = '' } = request.query;
+  const erpBase = (process.env.ERP_URL || '').replace(/\/$/, '');
+
+  if (!erpBase) {
+    return reply.code(503).send({ ok: false, reason: 'ERP_URL not configured' });
+  }
+
+  const url = `${erpBase}/WebOpenDCLassForUser.hal` +
+    `?user=${encodeURIComponent(user)}` +
+    `&sernr=${encodeURIComponent(sernr)}` +
+    `&wclass=${encodeURIComponent(wclass)}`;
+
+  try {
+    await fetch(url, { signal: AbortSignal.timeout(3000) });
+  } catch { /* fire and forget — ERP doesn't return meaningful response */ }
+
+  return reply.send({ ok: true });
+});
+
 async function start() {
   try {
     await db.raw('select 1 as ok');
