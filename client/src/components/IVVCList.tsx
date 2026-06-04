@@ -28,8 +28,16 @@ const COLUMNS: Col[] = [
     render: r => r.OKFLAG,
   },
   {
-    label: 'Dátum',   width: 80,  sortField: 'INVDATE',
+    label: 'Dátum',    width: 80,  sortField: 'INVDATE',
     render: r => r.INVDATE,
+  },
+  {
+    label: 'Splatnosť', width: 80, sortField: 'PAYDATE',
+    render: r => r.PAYDATE,
+  },
+  {
+    label: 'Ref.',     width: 90,  sortField: 'OURCONTACT',
+    render: r => r.OURCONTACT,
   },
   {
     label: 'Úrad.č.', width: 110, sortField: 'OFFICIALSERNR',
@@ -37,7 +45,7 @@ const COLUMNS: Col[] = [
   },
   {
     label: 'Č.Obj.',  width: 80,  sortField: 'ORDERNR',
-    render: r => r.ORDERNR ?? '',
+    render: r => (r.ORDERNR === null || r.ORDERNR === -1) ? '' : r.ORDERNR,
   },
   {
     label: 'Odberateľ', width: 70, sortField: 'CUSTCODE',
